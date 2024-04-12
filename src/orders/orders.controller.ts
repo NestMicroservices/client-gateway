@@ -5,16 +5,16 @@ import {
   Inject,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 
 import { firstValueFrom } from 'rxjs';
+import { PaginationDto } from 'src/common';
 import { Services } from 'src/config';
 import { CreateOrderDto, OrderPaginationDto, StatusDto } from './dto';
-import { OrderStatus } from './interfaces';
-import { PaginationDto } from 'src/common';
 
 @Controller('orders')
 export class OrdersController {
@@ -57,6 +57,24 @@ export class OrdersController {
         }),
       );
       return orders;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
+  @Patch(':id')
+  async changeOrderStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query() statusDto: StatusDto,
+  ) {
+    try {
+      const order = await firstValueFrom(
+        this.ordersClient.send('changeOrderStatus', {
+          id,
+          status: statusDto.status,
+        }),
+      );
+      return order;
     } catch (error) {
       throw new RpcException(error);
     }
