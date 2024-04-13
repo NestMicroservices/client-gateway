@@ -1,4 +1,5 @@
 export enum Services {
   ORDER = 'ORDER_SERVICE',
   PRODUCT = 'PRODUCT_SERVICE',
+  NATS_SERVICE = 'NATS_SERVICE',
 }
